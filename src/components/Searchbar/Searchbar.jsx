@@ -1,22 +1,43 @@
 import React from 'react';
+import { Component } from 'react';
 
-const SearchBar = ({ onSubmit }) => {
-  return (
-    <header>
-      <form onSubmit={onSubmit}>
-        <button type="submit">
-          <span>Search</span>
-        </button>
-        <input
-          type="text"
-          autocomplete="off"
-          autofocus
-          placeholder="Search images and photos"
-        />
-      </form>
-    </header>
-  );
-};
+class SearchBar extends Component {
+  state = {
+    value: '',
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.onSubmit(this.state.value);
+    this.resetForm();
+  };
+  handleChange = e => {
+    const value = e.target.value;
+    this.setState({ value });
+  };
+  resetForm = () => {
+    this.setState({ value: '' });
+  };
+  render() {
+    return (
+      <header>
+        <form onSubmit={this.handleSubmit}>
+          <button type="submit">
+            <span>Search</span>
+          </button>
+          <input
+            onChange={this.handleChange}
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+            value={this.state.value}
+          />
+        </form>
+      </header>
+    );
+  }
+}
 
 // SearchBar.propTypes = {};
 
