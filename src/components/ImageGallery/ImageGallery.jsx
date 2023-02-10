@@ -4,14 +4,13 @@ import ImageGalleryItem from 'components/ImageGalleryItem';
 
 const ImageGallery = ({ images }) => {
   return (
-    <ul>
-      {images.map(({ id, webformatURL, tags, onClose, largeImageURL }) => {
+    <ul className="ImageGallery">
+      {images.map(({ id, webformatURL, tags, largeImageURL }) => {
         return (
           <ImageGalleryItem
             key={id}
             webformatURL={webformatURL}
             tags={tags}
-            onClose={onClose}
             largeImageURL={largeImageURL}
           />
         );

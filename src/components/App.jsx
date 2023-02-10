@@ -3,38 +3,39 @@ import SearchBar from './Searchbar/Searchbar';
 import fetchImages from './Api';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
-import Modal from './Modal';
 
 export class App extends Component {
   state = {
     images: [],
     page: 1,
     query: '',
-    showModal: false,
+    totalImages: 0,
   };
 
   componentDidUpdate(_, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevState.query !== this.state.query
-    ) {
-      this.getImages(this.state.query, this.state.page);
+    const { query, page } = this.state;
+    if (prevState.page !== page || prevState.query !== query) {
+      this.getImages();
     }
   }
 
-  getImages = async (value, page = 1) => {
-    console.log(value);
-    const response = await fetchImages(value, page);
+  getImages = async () => {
+    const { query, page } = this.state;
+    const response = await fetchImages(query, page);
+
     console.log(response);
     this.setState({
       images: [...this.state.images, ...response.hits],
-      query: value,
+      totalImages: response.totalHits,
     });
   };
 
   setQuery = query => {
     this.setState({
       query,
+      page: 1,
+      images: [],
+      totalImages: 0,
     });
   };
 
@@ -44,21 +45,14 @@ export class App extends Component {
     }));
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
-
   render() {
-    const { images } = this.state;
+    const { images, totalImages } = this.state;
 
     return (
       <>
         <SearchBar onSubmit={this.setQuery} />
-        <ImageGallery images={images} onClose={this.toggleModal} />
-        {/* <Modal onClose={this.toggleModal} /> */}
-        {images.length === 0 ? null : (
+        <ImageGallery images={images} />
+        {totalImages !== images.length && (
           <Button onClickLoadMore={this.handleLoadMore} />
         )}
       </>
