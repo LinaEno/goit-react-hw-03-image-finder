@@ -6,6 +6,7 @@ import Button from './Button';
 import { InfinitySpin } from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Notification from './Notification';
 
 export class App extends Component {
   state = {
@@ -21,6 +22,7 @@ export class App extends Component {
     const { query, page } = this.state;
     if (prevState.page !== page || prevState.query !== query) {
       this.getImages();
+      // this.onScrollToBottom();
     }
   }
 
@@ -30,11 +32,14 @@ export class App extends Component {
       this.setState({ isLoading: true });
       const response = await fetchImages(query, page);
 
-      console.log(response);
       this.setState({
         images: [...this.state.images, ...response.hits],
         totalImages: response.totalHits,
       });
+      // if (page !== 1) {
+      //   this.onScrollToBottom();
+      // }
+
       if (response.hits.length < 1) {
         toast.error('Nothing was found for your request');
         return;
@@ -65,6 +70,13 @@ export class App extends Component {
     }));
   };
 
+  // onScrollToBottom = () => {
+  //   window.scrollTo({
+  //     bottom: 0,
+  //     behavior: 'smooth',
+  //   });
+  // };
+
   render() {
     const { images, totalImages, isLoading } = this.state;
 
@@ -73,7 +85,7 @@ export class App extends Component {
         <SearchBar onSubmit={this.setQuery} />
         {isLoading && <InfinitySpin width="200" color="#3f51b5" />}
         {images.length === 0 ? (
-          <p>No images</p>
+          <Notification />
         ) : (
           <ImageGallery images={images} />
         )}

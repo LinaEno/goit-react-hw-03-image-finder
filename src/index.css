@@ -209,3 +209,15 @@ img {
 .Button:focus {
   background-color: #303f9f;
 }
+
+/* Нотифікашка */
+.SearchImg {
+  margin: 0 auto;
+}
+
+.Notification {
+  font-size: 40px;
+  font-weight: 500;
+  color: #303f9f;
+  text-align: center;
+}
