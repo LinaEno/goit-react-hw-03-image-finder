@@ -14,6 +14,7 @@ export class App extends Component {
     query: '',
     totalImages: 0,
     isLoading: false,
+    error: null,
   };
 
   componentDidUpdate(_, prevState) {
@@ -34,9 +35,13 @@ export class App extends Component {
         images: [...this.state.images, ...response.hits],
         totalImages: response.totalHits,
       });
+      if (response.hits.length < 1) {
+        toast.error('Nothing was found for your request');
+        return;
+      }
     } catch (error) {
-      // toast.error('Nothing was found for your request');
-      alert('error');
+      console.log(error);
+      this.setState({ error });
     } finally {
       this.setState({ isLoading: false });
     }

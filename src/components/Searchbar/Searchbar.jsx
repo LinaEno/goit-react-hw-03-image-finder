@@ -1,6 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 import { BsSearch } from 'react-icons/bs';
+import PropTypes from 'prop-types';
 
 class SearchBar extends Component {
   state = {
@@ -41,6 +42,8 @@ class SearchBar extends Component {
   }
 }
 
-// SearchBar.propTypes = {};
+SearchBar.propTypes = {
+  value: PropTypes.string,
+};
 
 export default SearchBar;
