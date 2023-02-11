@@ -3,6 +3,9 @@ import SearchBar from './Searchbar/Searchbar';
 import fetchImages from './Api';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
+import { InfinitySpin } from 'react-loader-spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class App extends Component {
   state = {
@@ -10,6 +13,7 @@ export class App extends Component {
     page: 1,
     query: '',
     totalImages: 0,
+    isLoading: false,
   };
 
   componentDidUpdate(_, prevState) {
@@ -21,13 +25,19 @@ export class App extends Component {
 
   getImages = async () => {
     const { query, page } = this.state;
-    const response = await fetchImages(query, page);
+    try {
+      this.setState({ isLoading: true });
+      const response = await fetchImages(query, page);
 
-    console.log(response);
-    this.setState({
-      images: [...this.state.images, ...response.hits],
-      totalImages: response.totalHits,
-    });
+      console.log(response);
+      this.setState({
+        images: [...this.state.images, ...response.hits],
+        totalImages: response.totalHits,
+      });
+    } catch (error) {
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   setQuery = query => {
@@ -46,12 +56,18 @@ export class App extends Component {
   };
 
   render() {
-    const { images, totalImages } = this.state;
+    const { images, totalImages, isLoading } = this.state;
 
     return (
       <>
         <SearchBar onSubmit={this.setQuery} />
-        <ImageGallery images={images} />
+        {isLoading && <InfinitySpin width="200" color="#3f51b5" />}
+        {images.length === 0 ? (
+          <p>No images</p>
+        ) : (
+          <ImageGallery images={images} />
+        )}
+
         {totalImages !== images.length && (
           <Button onClickLoadMore={this.handleLoadMore} />
         )}
