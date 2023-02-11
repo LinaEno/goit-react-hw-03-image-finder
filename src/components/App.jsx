@@ -35,12 +35,17 @@ export class App extends Component {
         totalImages: response.totalHits,
       });
     } catch (error) {
+      // toast.error('Nothing was found for your request');
+      alert('error');
     } finally {
       this.setState({ isLoading: false });
     }
   };
 
   setQuery = query => {
+    if (query === this.state.query) {
+      toast.error('Enter new request');
+    }
     this.setState({
       query,
       page: 1,
@@ -71,6 +76,12 @@ export class App extends Component {
         {totalImages !== images.length && (
           <Button onClickLoadMore={this.handleLoadMore} />
         )}
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          theme="colored"
+          closeOnClick
+        />
       </>
     );
   }
