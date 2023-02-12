@@ -26,7 +26,6 @@ class ImageGalleryItem extends Component {
             largeImageURL={this.props.largeImageURL}
             tags={this.props.tags}
             onClose={this.toggleModal}
-            // onClick={this.toggleModal}
           />
         ) : null}
       </li>

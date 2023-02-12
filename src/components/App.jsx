@@ -1,12 +1,13 @@
 import { Component } from 'react';
 import SearchBar from './Searchbar/Searchbar';
-import fetchImages from './Api';
+import fetchImages from '../services/Api';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
 import { InfinitySpin } from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Notification from './Notification';
+// import Loader from './Loader/Loader';
 
 export class App extends Component {
   state = {
@@ -15,7 +16,7 @@ export class App extends Component {
     query: '',
     totalImages: 0,
     isLoading: false,
-    error: null,
+    error: '',
   };
 
   componentDidUpdate(_, prevState) {
@@ -29,24 +30,24 @@ export class App extends Component {
   getImages = async () => {
     const { query, page } = this.state;
     try {
-      this.setState({ isLoading: true });
-      const response = await fetchImages(query, page);
+      this.setState({ isLoading: true, error: '' });
+      const { totalImages, images } = await fetchImages(query, page);
 
       this.setState({
-        images: [...this.state.images, ...response.hits],
-        totalImages: response.totalHits,
+        images: [...this.state.images, ...images],
+        totalImages,
       });
       // if (page !== 1) {
       //   this.onScrollToBottom();
       // }
 
-      if (response.hits.length < 1) {
+      if (totalImages.length < 1) {
         toast.error('Nothing was found for your request');
         return;
       }
     } catch (error) {
-      console.log(error);
-      this.setState({ error });
+      toast.error('Oops, something went wrong');
+      this.setState({ error: error.message });
     } finally {
       this.setState({ isLoading: false });
     }
@@ -83,16 +84,19 @@ export class App extends Component {
     return (
       <>
         <SearchBar onSubmit={this.setQuery} />
-        {isLoading && <InfinitySpin width="200" color="#3f51b5" />}
+
         {images.length === 0 ? (
           <Notification />
         ) : (
           <ImageGallery images={images} />
         )}
 
-        {totalImages !== images.length && (
+        {totalImages !== images.length && !isLoading && (
           <Button onClickLoadMore={this.handleLoadMore} />
         )}
+
+        {isLoading && <InfinitySpin width="200" color="#3f51b5" />}
+
         <ToastContainer
           position="top-center"
           autoClose={5000}
